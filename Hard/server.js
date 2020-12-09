@@ -1,12 +1,13 @@
-var express = require("express");
+//
 
-require("dotenv").config();
 
+var express = require("express")
+ 
 var app = express()
 
 var data = require("./public/database.json") //lets me access the data base
 
-app.use(express.json); //turns the file into json
+app.use(express.json()); //turns the file into json
 
 
 app.get("/workers", (req, res) => {
@@ -31,7 +32,12 @@ app.get("/workers/:id", (req, res) => {
   }
   res.send(findEmployee)
 
-})
+});
+
+
+
+
+
 app.post("/workers", (req, res) => {
 
   const findEmployee = {
@@ -46,36 +52,28 @@ app.post("/workers", (req, res) => {
   if (!findEmployee) {
     res.status(404).send("Could not find the information")
   }
-
-  // get new information into the array
-  data.workers.push(findEmployee);
-
-
   res.send(findEmployee)
 
   return
 
 })
 
-app.delete("/workers/:id", (req, res) => {
-
-  const findEmployee = data.workers.find(function (employee) {
-
+app.delete('/workers/:id', (req,res) => {
+  const findEmployee =  data.workers.find(function(employee){
     return parseInt(req.params.id) === employee.id
+    })
+
+  if(!findEmployee) {
+    res.status(404).send('Could not find information')
+    }
+
+  const index = data.workers.indexOf(findEmployee)
+  data.workers.splice(index,1)
+
+   res.send(findEmployee)
 
   })
 
-  if (!findEmployee) {
-    res.status(404).send("Could not find the information")
-  }
+const port = process.env.PORT || 3000;
 
-  const index = data.workers.indexOf(findEmployee)
-  data.workers.splice(index, 1)
-  res.send(findEmployee)
-
-})
-
-
-app.listen(port, () => {
-  console.log(`server is running on port ${port}`)
-})
+app.listen(3000)
